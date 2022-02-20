@@ -6,9 +6,9 @@ import os
 from setuptools import find_packages, setup
 
 # Package meta-data.
-NAME = "cicflowmeter"
+NAME = "cicflowmeterd"
 DESCRIPTION = "CICFlowMeter V3 Python Implementation"
-URL = "https://github.com/lifesboy/cicflowmeter-1.git"
+URL = "https://github.com/lifesboy/cicflowmeter-d.git"
 EMAIL = "hieulw99@gmail.com"
 AUTHOR = "Le Hieu"
 REQUIRES_PYTHON = ">=3.7.0"
