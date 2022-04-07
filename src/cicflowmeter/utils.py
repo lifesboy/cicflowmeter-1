@@ -1,5 +1,6 @@
 import uuid
 from itertools import islice, zip_longest
+from .util.logger import log
 
 import numpy
 
@@ -21,18 +22,21 @@ def random_string():
 def get_statistics(alist: list):
     """Get summary statistics of a list"""
     iat = dict()
-
-    if len(alist) > 1:
-        iat["total"] = sum(alist)
-        iat["max"] = max(alist)
-        iat["min"] = min(alist)
-        iat["mean"] = numpy.mean(alist)
-        iat["std"] = numpy.sqrt(numpy.var(alist))
-    else:
-        iat["total"] = 0
-        iat["max"] = 0
-        iat["min"] = 0
-        iat["mean"] = 0
-        iat["std"] = 0
+    try:
+        if len(alist) > 1:
+            iat["total"] = sum(alist)
+            iat["max"] = max(alist)
+            iat["min"] = min(alist)
+            iat["mean"] = numpy.mean(alist)
+            iat["std"] = numpy.sqrt(numpy.var(alist))
+        else:
+            iat["total"] = 0
+            iat["max"] = 0
+            iat["min"] = 0
+            iat["mean"] = 0
+            iat["std"] = 0
+    except Exception as e:
+        log.error('statistics %s error: %s', alist, e)
+        raise e
 
     return iat
