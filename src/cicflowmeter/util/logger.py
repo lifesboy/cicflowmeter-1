@@ -3,7 +3,7 @@ import logging
 LOG_INFO_FILE = '/var/log/cicflowmeter/cicflowmeter.log'
 LOG_ERROR_FILE = '/var/log/cicflowmeter/error.log'
 
-_log_format = f"%(asctime)s [%(levelname)s] %(name)s (%(filename)s).%(funcName)s(%(lineno)d) %(message)s"
+_log_format = f"%(asctime)s[%(levelname)s] (%(filename)s).%(funcName)s(%(lineno)d) %(message)s"
 
 
 def get_file_handler():
@@ -27,10 +27,13 @@ def get_stream_handler():
     return stream_handler
 
 
-def get_logger(name: str, level: int = logging.DEBUG):
+def get_logger(name: str = None, level: int = logging.DEBUG):
     logger = logging.getLogger(name)
     logger.setLevel(level)
     logger.addHandler(get_file_handler())
     logger.addHandler(get_file_handler_error())
     logger.addHandler(get_stream_handler())
     return logger
+
+
+log = get_logger()

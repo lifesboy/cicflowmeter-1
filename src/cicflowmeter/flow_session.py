@@ -1,7 +1,5 @@
 import csv
-from .util import logger
-
-log = logger.get_logger(__name__)
+from .util.logger import log
 
 from collections import defaultdict
 
@@ -40,7 +38,7 @@ class FlowSession(DefaultSession):
         return super(FlowSession, self).toPacketList()
 
     def on_packet_received(self, packet):
-        log.debug('on_packet_received packets_count=%s', self.packets_count)
+        log.debug('on_packet_received packets_count=%s, output_mode=%s', self.packets_count, self.output_mode)
 
         count = 0
         direction = PacketDirection.FORWARD
