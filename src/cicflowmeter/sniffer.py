@@ -1,5 +1,6 @@
 import argparse
 import glob
+from .util.logger import log
 
 from scapy.layers.inet import IP, TCP, UDP
 # from scapy.sendrecv import sniff
@@ -70,6 +71,15 @@ def main():
         help="number of files to sniff per session (default=100)",
     )
 
+    input_group.add_argument(
+        "-cpu",
+        "--cpu-num",
+        action="store",
+        dest="cpu_num",
+        default=100,
+        help="number of cpus to sniff (default=1)",
+    )
+
     output_group = parser.add_mutually_exclusive_group(required=False)
     output_group.add_argument(
         "-c",
@@ -97,6 +107,7 @@ def main():
 
     args = parser.parse_args()
     batch_size = args.batch
+    cpu_num = args.cpu_num
     input_interface = args.input_interface
     output_mode = args.output_mode
     output = args.output
@@ -109,14 +120,19 @@ def main():
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
 
-    for sniffer in sniffers:
-        sniffer.start()
+    tasks_batches = [files[i:i + cpu_num] for i in range(0, len(sniffers), cpu_num)]
+
+    log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s', len(files), len(batches), len(tasks_batches))
+    for tasks in tasks_batches:
+        ps = list(map(lambda i: i.start(), tasks))
         try:
-            sniffer.join()
-        except KeyboardInterrupt:
-            sniffer.stop()
+            list(map(lambda i: i.join(), ps))
+        except KeyboardInterrupt as e:
+            log.error('sniffing tasks interrupted: %s', e)
+            list(map(lambda i: i.stop(), ps))
         finally:
-            sniffer.join()
+            list(map(lambda i: i.join(), ps))
+    log.info('finish sniffing.')
 
 
 if __name__ == "__main__":
