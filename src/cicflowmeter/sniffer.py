@@ -106,7 +106,6 @@ def main():
         files = glob.glob(args.input_file)
         batches = [files[i:i + batch_size] for i in range(0, len(files), batch_size)]
         sniffers = map(lambda i: create_sniffer(i, None, output_mode, output, url_model), batches)
-
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
 
