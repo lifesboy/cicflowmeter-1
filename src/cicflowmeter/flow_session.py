@@ -53,7 +53,8 @@ class FlowSession(DefaultSession):
             # Creates a key variable to check
             packet_flow_key = get_packet_flow_key(packet, direction)
             flow = self.flows.get((packet_flow_key, count))
-        except Exception:
+        except Exception as e:
+            log.error('get_packet_flow_key error: %s', e)
             return
 
         self.packets_count += 1
