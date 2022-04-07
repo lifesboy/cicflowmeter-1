@@ -38,8 +38,7 @@ class FlowSession(DefaultSession):
         return super(FlowSession, self).toPacketList()
 
     def on_packet_received(self, packet):
-        log.debug('on_packet_received packets_count=%s, output_mode=%s', self.packets_count, self.output_mode)
-
+        # log.debug('on_packet_received packets_count=%s, output_mode=%s', self.packets_count, self.output_mode)
         count = 0
         direction = PacketDirection.FORWARD
 
@@ -108,7 +107,7 @@ class FlowSession(DefaultSession):
     def garbage_collect(self, latest_time) -> None:
         # TODO: Garbage Collection / Feature Extraction should have a separate thread
         if not self.url_model:
-            print("Garbage Collection Began. Flows = {}".format(len(self.flows)))
+            log.info('Garbage Collection Began. Flows = {}'.format(len(self.flows)))
         keys = list(self.flows.keys())
         for k in keys:
             flow = self.flows.get(k)
@@ -128,7 +127,7 @@ class FlowSession(DefaultSession):
 
                 del self.flows[k]
         if not self.url_model:
-            print("Garbage Collection Finished. Flows = {}".format(len(self.flows)))
+            log.info('Garbage Collection Finished. Flows = {}'.format(len(self.flows)))
 
 
 def generate_session_class(output_mode, output_file, url_model):
