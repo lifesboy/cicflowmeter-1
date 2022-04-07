@@ -1,5 +1,8 @@
 import argparse
 
+from scapy.layers.inet import IP, TCP, UDP
+# from scapy.sendrecv import sniff
+
 from scapy.sendrecv import AsyncSniffer
 
 from .flow_session import generate_session_class
@@ -13,9 +16,16 @@ def create_sniffer(
     NewFlowSession = generate_session_class(output_mode, output_file, url_model)
 
     if input_file is not None:
+        #sniff(offline='/cic/dataset/nsm/log.3.1649256692.pcap', lfilter=lambda x: IP in x and (TCP in x or UDP in x), prn=lambda x: x.summary(), count=20)
+        # sniff(offline=input_file,
+        #       filter="ip and (tcp or udp)",
+        #       prn=None,
+        #       session=NewFlowSession,
+        #       store=False,
+        #       )
         return AsyncSniffer(
             offline=input_file,
-            filter="ip and (tcp or udp)",
+            lfilter=lambda x: IP in x and (TCP in x or UDP in x),
             prn=None,
             session=NewFlowSession,
             store=False,
