@@ -41,7 +41,6 @@ class FlowSession(DefaultSession):
 
     def on_packet_received(self, packet):
         log.debug('on_packet_received packets_count=%s', self.packets_count)
-        print('on_packet_received packets_count=%s' % self.packets_count)
 
         count = 0
         direction = PacketDirection.FORWARD
