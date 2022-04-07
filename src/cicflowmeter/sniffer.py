@@ -120,7 +120,8 @@ def main():
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
 
-    tasks_batches = [sniffers[i:i + cpu_num] for i in range(0, len(list(sniffers)), cpu_num)]
+    sniffers = list(sniffers)
+    tasks_batches = [sniffers[i:i + cpu_num] for i in range(0, len(sniffers), cpu_num)]
 
     log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s',
              len(list(files)), len(list(batches)), len(list(tasks_batches)))
