@@ -1,4 +1,5 @@
 import argparse
+import glob
 
 from scapy.layers.inet import IP, TCP, UDP
 # from scapy.sendrecv import sniff
@@ -16,7 +17,7 @@ def create_sniffer(
     NewFlowSession = generate_session_class(output_mode, output_file, url_model)
 
     if input_file is not None:
-        #sniff(offline='/cic/dataset/nsm/log.3.1649256692.pcap', lfilter=lambda x: IP in x and (TCP in x or UDP in x), prn=lambda x: x.summary(), count=20)
+        #sniff(offline=['/cic/dataset/nsm/log.3.1649256692.pcap'], lfilter=lambda x: IP in x and (TCP in x or UDP in x), prn=lambda x: x.summary(), count=20)
         # sniff(offline=input_file,
         #       filter="ip and (tcp or udp)",
         #       prn=None,
@@ -57,7 +58,16 @@ def main():
         "--file",
         action="store",
         dest="input_file",
-        help="capture offline data from INPUT_FILE",
+        help="capture offline data from INPUT_FILE pattern",
+    )
+
+    input_group.add_argument(
+        "-b",
+        "--batch",
+        action="store",
+        dest="batch",
+        default=100,
+        help="number of files to sniff per session (default=100)",
     )
 
     output_group = parser.add_mutually_exclusive_group(required=False)
@@ -86,22 +96,28 @@ def main():
     )
 
     args = parser.parse_args()
+    batch_size = args.batch
+    input_interface = args.input_interface
+    output_mode = args.output_mode
+    output = args.output
+    url_model = args.url_model
 
-    sniffer = create_sniffer(
-        args.input_file,
-        args.input_interface,
-        args.output_mode,
-        args.output,
-        args.url_model,
-    )
-    sniffer.start()
+    if args.input_file is not None:
+        files = glob.glob(args.input_file)
+        batches = [files[i:i + batch_size] for i in range(0, len(files), batch_size)]
+        sniffers = map(lambda i: create_sniffer(i, None, output_mode, output, url_model), batches)
 
-    try:
-        sniffer.join()
-    except KeyboardInterrupt:
-        sniffer.stop()
-    finally:
-        sniffer.join()
+    else:
+        sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
+
+    for sniffer in sniffers:
+        sniffer.start()
+        try:
+            sniffer.join()
+        except KeyboardInterrupt:
+            sniffer.stop()
+        finally:
+            sniffer.join()
 
 
 if __name__ == "__main__":
