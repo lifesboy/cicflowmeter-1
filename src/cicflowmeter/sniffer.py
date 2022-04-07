@@ -122,7 +122,8 @@ def main():
 
     tasks_batches = [files[i:i + cpu_num] for i in range(0, len(sniffers), cpu_num)]
 
-    log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s', len(files), len(batches), len(tasks_batches))
+    log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s',
+             len(list(files)), len(list(batches)), len(list(tasks_batches)))
     for tasks in tasks_batches:
         ps = list(map(lambda i: i.start(), tasks))
         try:
