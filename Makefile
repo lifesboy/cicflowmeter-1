@@ -1,16 +1,16 @@
-VERSION:=$(shell python setup.py --version)
+VERSION:=$(shell python3 setup.py --version)
 
 install:
-	python setup.py install
+	python3 setup.py install
 
 uninstall:
-	pip uninstall cicflowmeter -y
+	pip3 uninstall cicflowmeter -y
 
 clean:
 	rm -rf *.egg-info build dist report.xml
 
 build:
-	python setup.py sdist bdist_wheel --universal
+	python3 setup.py sdist bdist_wheel --universal
 
 release:
 	@git tag -a v$(VERSION)
