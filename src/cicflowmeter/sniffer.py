@@ -126,14 +126,14 @@ def main():
     log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s',
              len(list(files)), len(list(batches)), len(list(tasks_batches)))
     for tasks in tasks_batches:
-        ps = list(map(lambda i: i.start(), tasks))
+        list(map(lambda i: i.start(), tasks))
         try:
-            list(map(lambda i: i.join(), ps))
+            list(map(lambda i: i.join(), tasks))
         except KeyboardInterrupt as e:
             log.error('sniffing tasks interrupted: %s', e)
-            list(map(lambda i: i.stop(), ps))
+            list(map(lambda i: i.stop(), tasks))
         finally:
-            list(map(lambda i: i.join(), ps))
+            list(map(lambda i: i.join(), tasks))
     log.info('finish sniffing.')
 
 
