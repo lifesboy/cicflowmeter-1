@@ -66,6 +66,7 @@ def main():
     run_config_group.add_argument(
         "-b",
         "--batch",
+        type=int,
         action="store",
         dest="batch",
         default=100,
@@ -75,6 +76,7 @@ def main():
     run_config_group.add_argument(
         "-cpu",
         "--cpu-num",
+        type=int,
         action="store",
         dest="cpu_num",
         default=100,
