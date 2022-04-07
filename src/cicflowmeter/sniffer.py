@@ -62,8 +62,8 @@ def main():
         help="capture offline data from INPUT_FILE pattern",
     )
 
-    run_config_group = parser.add_mutually_exclusive_group(required=False)
-    run_config_group.add_argument(
+    batch_group = parser.add_mutually_exclusive_group(required=False)
+    batch_group.add_argument(
         "-b",
         "--batch",
         type=int,
@@ -73,13 +73,14 @@ def main():
         help="number of files to sniff per session (default=100)",
     )
 
-    run_config_group.add_argument(
+    cpu_num_group = parser.add_mutually_exclusive_group(required=False)
+    cpu_num_group.add_argument(
         "-cpu",
         "--cpu-num",
         type=int,
         action="store",
         dest="cpu_num",
-        default=100,
+        default=1,
         help="number of cpus to sniff (default=1)",
     )
 
