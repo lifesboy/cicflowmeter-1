@@ -1,4 +1,8 @@
 import csv
+from .util import logger
+
+log = logger.get_logger(__name__)
+
 from collections import defaultdict
 
 from scapy.sessions import DefaultSession
@@ -36,6 +40,8 @@ class FlowSession(DefaultSession):
         return super(FlowSession, self).toPacketList()
 
     def on_packet_received(self, packet):
+        log.debug('on_packet_received packets_count=%s', self.packets_count)
+
         count = 0
         direction = PacketDirection.FORWARD
 
