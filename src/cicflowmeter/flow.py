@@ -216,7 +216,7 @@ class Flow:
 
         if self.start_timestamp != 0:
             self.flow_interarrival_time.append(
-                float(1e6 * (packet.time - self.latest_timestamp))
+                int(1e6) * (packet.time - self.latest_timestamp)
             )
 
         self.latest_timestamp = max([packet.time, self.latest_timestamp])
