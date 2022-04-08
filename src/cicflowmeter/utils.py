@@ -27,8 +27,9 @@ def get_statistics(alist: list):
             iat["total"] = sum(alist)
             iat["max"] = max(alist)
             iat["min"] = min(alist)
-            iat["mean"] = numpy.mean(list(map(float, alist)))
-            iat["std"] = numpy.sqrt(numpy.var(alist))
+            alist_float = list(map(float, alist))
+            iat["mean"] = numpy.mean(alist_float)
+            iat["std"] = numpy.sqrt(numpy.var(alist_float))
         else:
             iat["total"] = 0
             iat["max"] = 0
