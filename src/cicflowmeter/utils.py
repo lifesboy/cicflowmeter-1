@@ -5,6 +5,14 @@ from .util.logger import log
 import numpy
 
 
+def get_output_file_of_batch(files: []) -> str:
+    return '%s.csv' % '_'.join(files)
+
+
+def get_marked_done_file_name(name: str) -> str:
+    return '.%s.done.cic' % name
+
+
 def grouper(iterable, n, max_groups=0, fillvalue=None):
     """Collect data into fixed-length chunks or blocks"""
 

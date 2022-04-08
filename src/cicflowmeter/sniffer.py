@@ -1,6 +1,10 @@
 import argparse
 import glob
-from .util.logger import log
+import os
+import pandas as pd
+
+from cicflowmeter import utils
+from cicflowmeter.util.logger import log
 
 from scapy.layers.inet import IP, TCP, UDP
 # from scapy.sendrecv import sniff
@@ -11,14 +15,14 @@ from .flow_session import generate_session_class
 
 
 def create_sniffer(
-    input_file, input_interface, output_mode, output_file, url_model=None
+        input_file, input_interface, output_mode, output_file, url_model=None
 ):
     assert (input_file is None) ^ (input_interface is None)
 
     NewFlowSession = generate_session_class(output_mode, output_file, url_model)
 
     if input_file is not None:
-        #sniff(offline=['/cic/dataset/nsm/log.3.1649256692.pcap'], lfilter=lambda x: IP in x and (TCP in x or UDP in x), prn=lambda x: x.summary(), count=20)
+        # sniff(offline=['/cic/dataset/nsm/log.3.1649256692.pcap'], lfilter=lambda x: IP in x and (TCP in x or UDP in x), prn=lambda x: x.summary(), count=20)
         # sniff(offline=input_file,
         #       filter="ip and (tcp or udp)",
         #       prn=None,
@@ -40,6 +44,18 @@ def create_sniffer(
             session=NewFlowSession,
             store=False,
         )
+
+
+def sniff(run) -> bool:
+    for tasks in run.sniffer:
+        list(map(lambda i: i.start(), tasks))
+        try:
+            list(map(lambda i: i.join(), tasks))
+        except KeyboardInterrupt as e:
+            log.error('sniffing tasks interrupted: %s', e)
+            list(map(lambda i: i.stop(), tasks))
+        finally:
+            list(map(lambda i: i.join(), tasks))
 
 
 def main():
@@ -106,7 +122,7 @@ def main():
 
     parser.add_argument(
         "output",
-        help="output file name (in flow mode) or directory (in sequence mode)",
+        help="output directory",
     )
 
     args = parser.parse_args()
@@ -118,26 +134,28 @@ def main():
     url_model = args.url_model
 
     if args.input_file is not None:
-        files = glob.glob(args.input_file)
-        batches = [files[i:i + batch_size] for i in range(0, len(files), batch_size)]
-        sniffers = map(lambda i: create_sniffer(i, None, output_mode, output, url_model), batches)
+        input_files = glob.glob(args.input_file)
+        file_df = pd.DataFrame(input_files, columns=['input_path'])
+        file_df['input_name'] = file_df.apply(lambda i: os.path.split(i.input_path)[-1], axis=1)
+        file_df['marked_done_name'] = file_df.apply(lambda i: utils.get_marked_done_file_name(i.input_path), axis=1)
+        file_df['marked_done_path'] = file_df.apply(lambda i: os.path.join(output, i.marked_done_name), axis=1)
+        file_df['marked_done_existed'] = file_df.apply(lambda i: os.path.exists(i.marked_done_path), axis=1)
+
+        file_df = file_df[file_df['marked_done_existed']].sort_values('input_name')
+        file_df['batch'] = file_df.apply(lambda i: i.name // batch_size, axis=1)
+
+        batch_df = file_df.groupby('batch')
+        batch_df['output_name'] = batch_df.apply(lambda i: utils.get_output_file_of_batch(i.input_path), axis=1)
+        batch_df['sniffer'] = batch_df.apply(lambda i: create_sniffer(
+            i.input_path, None, output_mode, i.output_name, url_model), axis=1)
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
+        batch_df = pd.DataFrame(sniffers, columns=['sniffer'])
 
-    sniffers = list(sniffers)
-    tasks_batches = [sniffers[i:i + cpu_num] for i in range(0, len(sniffers), cpu_num)]
+    batch_df['episode'] = batch_df.apply(lambda i: i.name // cpu_num, axis=1)
 
-    log.info('start sniffing: files=%s, batches=%s, tasks_batches=%s',
-             len(list(files)), len(list(batches)), len(list(tasks_batches)))
-    for tasks in tasks_batches:
-        list(map(lambda i: i.start(), tasks))
-        try:
-            list(map(lambda i: i.join(), tasks))
-        except KeyboardInterrupt as e:
-            log.error('sniffing tasks interrupted: %s', e)
-            list(map(lambda i: i.stop(), tasks))
-        finally:
-            list(map(lambda i: i.join(), tasks))
+    log.info('start sniffing: episode=%s', batch_df.count())
+    batch_df.apply(lambda i: sniff(i), axis=1)
     log.info('finish sniffing.')
 
 
