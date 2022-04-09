@@ -2,11 +2,12 @@ import uuid
 from itertools import islice, zip_longest
 from .util.logger import log
 
+import hashlib
 import numpy
 
 
 def get_output_file_of_batch(files: []) -> str:
-    return '%s.csv' % '_'.join(files)
+    return '%s.csv' % hashlib.sha256('_'.join(files).encode('utf-8')).hexdigest()
 
 
 def get_marked_done_file_name(name: str) -> str:

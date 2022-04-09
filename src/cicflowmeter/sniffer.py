@@ -2,6 +2,7 @@ import argparse
 import glob
 import os
 import pandas as pd
+from pandas import DataFrame
 
 from cicflowmeter import utils
 from cicflowmeter.util.logger import log
@@ -135,24 +136,29 @@ def main():
 
     if args.input_file is not None:
         input_files = glob.glob(args.input_file)
-        file_df = pd.DataFrame(input_files, columns=['input_path'])
+        file_df: DataFrame = pd.DataFrame(input_files, columns=['input_path'])
         file_df['input_name'] = file_df.apply(lambda i: os.path.split(i.input_path)[-1], axis=1)
         file_df['marked_done_name'] = file_df.apply(lambda i: utils.get_marked_done_file_name(i.input_path), axis=1)
         file_df['marked_done_path'] = file_df.apply(lambda i: os.path.join(output, i.marked_done_name), axis=1)
         file_df['marked_done_existed'] = file_df.apply(lambda i: os.path.exists(i.marked_done_path), axis=1)
 
-        file_df = file_df[file_df['marked_done_existed']].sort_values('input_name')
+        file_df = file_df.loc[file_df['marked_done_existed'] == False].sort_values('input_name')
+        file_df = file_df.filter(['input_path', 'marked_done_path']).applymap(lambda i: [i])
         file_df['batch'] = file_df.apply(lambda i: i.name // batch_size, axis=1)
 
-        batch_df = file_df.groupby('batch')
+        batch_df: DataFrame = file_df.groupby('batch').sum()
         batch_df['output_name'] = batch_df.apply(lambda i: utils.get_output_file_of_batch(i.input_path), axis=1)
+        batch_df['output_path'] = batch_df.apply(lambda i: os.path.join(output, i.output_name), axis=1)
         batch_df['sniffer'] = batch_df.apply(lambda i: create_sniffer(
             i.input_path, None, output_mode, i.output_name, url_model), axis=1)
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
         batch_df = pd.DataFrame(sniffers, columns=['sniffer'])
 
+    batch_df = batch_df.apply(lambda i: DataFrame({'output_name': i.output_name}), axis=1)
+
     batch_df['episode'] = batch_df.apply(lambda i: i.name // cpu_num, axis=1)
+    episode_df = batch_df.groupby('episode').aggregate(lambda i: i)
 
     log.info('start sniffing: episode=%s', batch_df.count())
     batch_df.apply(lambda i: sniff(i), axis=1)
