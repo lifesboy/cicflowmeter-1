@@ -47,16 +47,15 @@ def create_sniffer(
         )
 
 
-def sniff(run) -> bool:
-    for tasks in run.sniffer:
-        list(map(lambda i: i.start(), tasks))
-        try:
-            list(map(lambda i: i.join(), tasks))
-        except KeyboardInterrupt as e:
-            log.error('sniffing tasks interrupted: %s', e)
-            list(map(lambda i: i.stop(), tasks))
-        finally:
-            list(map(lambda i: i.join(), tasks))
+def sniff(df: DataFrame) -> bool:
+    df['sniffer'].apply(lambda i: i.start(), axis=1)
+    try:
+        df['sniffer'].apply(lambda i: i.join(), axis=1)
+    except KeyboardInterrupt as e:
+        log.error('sniffing tasks interrupted: %s', e)
+        df['sniffer'].apply(lambda i: i.stop(), axis=1)
+    finally:
+        df['sniffer'].apply(lambda i: i.join(), axis=1)
 
 
 def main():
@@ -155,13 +154,11 @@ def main():
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
         batch_df = pd.DataFrame(sniffers, columns=['sniffer'])
 
-    batch_df = batch_df.apply(lambda i: DataFrame({'output_name': i.output_name}), axis=1)
-
     batch_df['episode'] = batch_df.apply(lambda i: i.name // cpu_num, axis=1)
-    episode_df = batch_df.groupby('episode').aggregate(lambda i: i)
+    episode_gr = batch_df.groupby(['episode'])
 
-    log.info('start sniffing: episode=%s', batch_df.count())
-    batch_df.apply(lambda i: sniff(i), axis=1)
+    log.info('start sniffing: episode=%s', episode_gr.count())
+    episode_gr.apply(sniff)
     log.info('finish sniffing.')
 
 
