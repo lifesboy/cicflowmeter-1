@@ -11,7 +11,7 @@ def marked_done(files: []) -> bool:
     t = str(datetime.now())
     fs = list(map(lambda i: open(i, 'w'), files))
     list(map(lambda i: i.write(t), fs))
-    list(map(lambda i: i.close(t), fs))
+    list(map(lambda i: i.close(), fs))
     return True
 
 
