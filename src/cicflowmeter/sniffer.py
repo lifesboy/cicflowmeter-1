@@ -161,7 +161,7 @@ def main():
         file_df['batch'] = file_df.apply(lambda i: i.name // batch_size, axis=1)
 
         batch_df: DataFrame = file_df.groupby('batch').sum()
-        batch_df['output_name'] = batch_df.apply(lambda i: utils.get_output_file_of_batch(i.input_path), axis=1)
+        batch_df['output_name'] = batch_df.apply(lambda i: utils.get_output_file_of_batch(i.input_name), axis=1)
         batch_df['output_path'] = batch_df.apply(lambda i: os.path.join(output, i.output_name), axis=1)
         batch_df['sniffer'] = batch_df.apply(lambda i: create_sniffer(
             i.input_path, None, output_mode, i.output_path, url_model), axis=1)
