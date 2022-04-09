@@ -49,18 +49,18 @@ def create_sniffer(
 
 def sniff(df: DataFrame) -> bool:
     log.info('sniffing start %s to %s, marked at %s',
-             df['input_path'].values().tostring(),
-             df['output_path'].values().tostring(),
-             df['marked_done_path'].values().tostring())
+             df['input_path'].values().tolist(),
+             df['output_path'].values().tolist(),
+             df['marked_done_path'].values().tolist())
 
     df['sniffer'].apply(lambda i: i.start())
     try:
         df['sniffer'].apply(lambda i: i.join())
         df['marked_done_path'].apply(lambda i: utils.marked_done(i))
         log.info('sniffing done %s to %s, marked at %s',
-                 df['input_path'].values().tostring(),
-                 df['output_path'].values().tostring(),
-                 df['marked_done_path'].values().tostring())
+                 df['input_path'].values().tolist(),
+                 df['output_path'].values().tolist(),
+                 df['marked_done_path'].values().tolist())
     except KeyboardInterrupt as e:
         log.error('sniffing tasks interrupted: %s', e)
         df['sniffer'].apply(lambda i: i.stop())
@@ -68,9 +68,9 @@ def sniff(df: DataFrame) -> bool:
         df['sniffer'].apply(lambda i: i.join())
 
     log.info('sniffing end %s to %s, marked at %s',
-             df['input_path'].values().tostring(),
-             df['output_path'].values().tostring(),
-             df['marked_done_path'].values().tostring())
+             df['input_path'].values().tolist(),
+             df['output_path'].values().tolist(),
+             df['marked_done_path'].values().tolist())
 
 
 def main():
