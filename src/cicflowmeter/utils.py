@@ -7,10 +7,11 @@ import hashlib
 import numpy
 
 
-def marked_done(file: str) -> bool:
-    f = open(file, 'w')
-    f.write(str(datetime.now()))
-    f.close()
+def marked_done(files: []) -> bool:
+    t = str(datetime.now())
+    fs = list(map(lambda i: open(i, 'w'), files))
+    list(map(lambda i: i.write(t), fs))
+    list(map(lambda i: i.close(t), fs))
     return True
 
 
