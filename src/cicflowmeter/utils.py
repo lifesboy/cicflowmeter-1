@@ -1,17 +1,25 @@
 import uuid
 from itertools import islice, zip_longest
+from datetime import datetime
 from .util.logger import log
 
 import hashlib
 import numpy
 
 
+def marked_done(file: str) -> bool:
+    f = open(file, 'w')
+    f.write(str(datetime.now()))
+    f.close()
+    return True
+
+
 def get_output_file_of_batch(files: []) -> str:
     return '%s.csv' % hashlib.sha256('_'.join(files).encode('utf-8')).hexdigest()
 
 
-def get_marked_done_file_name(name: str) -> str:
-    return '.%s.done.cic' % name
+def get_marked_done_file_name(file: str) -> str:
+    return '.%s.done.cic' % hashlib.sha256(file.encode('utf-8')).hexdigest()
 
 
 def grouper(iterable, n, max_groups=0, fillvalue=None):

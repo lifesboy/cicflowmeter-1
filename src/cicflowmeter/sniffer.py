@@ -51,6 +51,7 @@ def sniff(df: DataFrame) -> bool:
     df['sniffer'].apply(lambda i: i.start())
     try:
         df['sniffer'].apply(lambda i: i.join())
+        df['marked_done_path'].apply(lambda i: utils.marked_done(i))
     except KeyboardInterrupt as e:
         log.error('sniffing tasks interrupted: %s', e)
         df['sniffer'].apply(lambda i: i.stop())
@@ -141,7 +142,7 @@ def main():
         file_df['marked_done_path'] = file_df.apply(lambda i: os.path.join(output, i.marked_done_name), axis=1)
         file_df['marked_done_existed'] = file_df.apply(lambda i: os.path.exists(i.marked_done_path), axis=1)
 
-        file_df = file_df.loc[file_df['marked_done_existed'] == False].sort_values('input_name')
+        file_df = file_df.loc[file_df['marked_done_existed'] == False].sort_values('input_path')
         file_df = file_df.filter(['input_path', 'marked_done_path']).applymap(lambda i: [i])
         file_df['batch'] = file_df.apply(lambda i: i.name // batch_size, axis=1)
 
