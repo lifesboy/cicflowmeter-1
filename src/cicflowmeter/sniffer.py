@@ -48,14 +48,14 @@ def create_sniffer(
 
 
 def sniff(df: DataFrame) -> bool:
-    df['sniffer'].apply(lambda i: i.start(), axis=1)
+    df['sniffer'].apply(lambda i: i.start())
     try:
-        df['sniffer'].apply(lambda i: i.join(), axis=1)
+        df['sniffer'].apply(lambda i: i.join())
     except KeyboardInterrupt as e:
         log.error('sniffing tasks interrupted: %s', e)
-        df['sniffer'].apply(lambda i: i.stop(), axis=1)
+        df['sniffer'].apply(lambda i: i.stop())
     finally:
-        df['sniffer'].apply(lambda i: i.join(), axis=1)
+        df['sniffer'].apply(lambda i: i.join())
 
 
 def main():
