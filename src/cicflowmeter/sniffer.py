@@ -164,7 +164,7 @@ def main():
         batch_df['output_name'] = batch_df.apply(lambda i: utils.get_output_file_of_batch(i.input_path), axis=1)
         batch_df['output_path'] = batch_df.apply(lambda i: os.path.join(output, i.output_name), axis=1)
         batch_df['sniffer'] = batch_df.apply(lambda i: create_sniffer(
-            i.input_path, None, output_mode, i.output_name, url_model), axis=1)
+            i.input_path, None, output_mode, i.output_path, url_model), axis=1)
     else:
         sniffers = [create_sniffer(None, input_interface, output_mode, output, url_model)]
         batch_df = pd.DataFrame(sniffers, columns=['sniffer'])
