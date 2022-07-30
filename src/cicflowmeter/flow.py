@@ -188,6 +188,7 @@ class Flow:
             "bwd_blk_rate_avg": float(
                 flow_bytes.get_bulk_rate(PacketDirection.REVERSE)
             ),
+            "label": "",
         }
 
         # Duplicated features
