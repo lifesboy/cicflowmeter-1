@@ -16,7 +16,7 @@ def marked_done(files: []) -> bool:
 
 
 def get_output_file_of_batch(names: []) -> str:
-    return '%s_%s.csv' % ('_'.join(names), datetime.now().strftime("%Y-%m-%dT%H%M%S"))
+    return '%s_%s.csv' % ('_'.join(names), datetime.now().strftime("%Y%m%dT%H%M%S"))
 
 
 def get_marked_done_file_name(file: str) -> str:
