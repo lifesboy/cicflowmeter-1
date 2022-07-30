@@ -63,6 +63,8 @@ class Flow:
         self.backward_bulk_size = 0
         self.backward_bulk_size_tmp = 0
 
+        self.label = ""
+
     def get_data(self) -> dict:
         """This method obtains the values of the features extracted from each flow.
 
