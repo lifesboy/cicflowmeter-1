@@ -236,7 +236,7 @@ class FlowBytes:
         feat = self.feature
         return [packet["IP"].ttl for packet, _ in feat.packets][0]
 
-    def get_payloads(self) -> [str]:
+    def get_payloads(self) -> list[str]:
         """Obtains the payload value.
 
         Returns:
@@ -256,7 +256,7 @@ class FlowBytes:
             return payload
 
         feat = self.feature
-        return [get_payload(packet) for packet, _ in feat.packets][0]
+        return [get_payload(packet) for packet, _ in feat.packets]
 
     def get_bytes_per_bulk(self, packet_direction):
         if packet_direction == PacketDirection.FORWARD:
