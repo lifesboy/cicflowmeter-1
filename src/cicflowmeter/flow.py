@@ -172,6 +172,7 @@ class Flow:
             "idle_min": float(idle_stat["min"]),
             "idle_mean": float(idle_stat["mean"]),
             "idle_std": float(idle_stat["std"]),
+            "ttl": float(flow_bytes.get_initial_ttl()),
             "fwd_byts_b_avg": float(
                 flow_bytes.get_bytes_per_bulk(PacketDirection.FORWARD)
             ),
@@ -201,6 +202,8 @@ class Flow:
         data["subflow_bwd_pkts"] = data["tot_bwd_pkts"]
         data["subflow_fwd_byts"] = data["totlen_fwd_pkts"]
         data["subflow_bwd_byts"] = data["totlen_bwd_pkts"]
+        for i, p in enumerate(flow_bytes.get_payloads()):
+            data[f"payload_{i}"] = p
 
         return data
 
