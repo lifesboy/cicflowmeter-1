@@ -236,7 +236,7 @@ class FlowBytes:
         feat = self.feature
         return [packet["IP"].ttl for packet, _ in feat.packets][0]
 
-    def get_payloads(self) -> list[str]:
+    def get_payloads(self) -> [str]:
         """Obtains the payload value.
 
         Returns:
