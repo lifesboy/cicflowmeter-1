@@ -1,4 +1,5 @@
 from scapy.layers.inet import IP, TCP, UDP, ICMP
+from scapy.packet import Raw
 
 from .context.packet_direction import PacketDirection
 from .packet_time import PacketTime
@@ -250,7 +251,7 @@ class FlowBytes:
                 if payload_protocol:
                     payload = bytes(packet[payload_protocol].payload).hex()
                 else:
-                    payload = bytes(packet.load).hex()
+                    payload = bytes(packet[Raw].load).hex()
             except AttributeError:
                 payload = '0'
             return payload
