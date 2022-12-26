@@ -202,8 +202,8 @@ class Flow:
         data["subflow_bwd_pkts"] = data["tot_bwd_pkts"]
         data["subflow_fwd_byts"] = data["totlen_fwd_pkts"]
         data["subflow_bwd_byts"] = data["totlen_bwd_pkts"]
-        for i, p in enumerate(flow_bytes.get_payloads()):
-            data[f"payload_{i}"] = p
+        data["tot_payloads"] = len(flow_bytes.get_payloads())
+        data["payloads"] = "|".join(flow_bytes.get_payloads())
 
         return data
 
