@@ -252,7 +252,7 @@ class FlowBytes:
                     payload = bytes(packet[payload_protocol].payload).hex()
                 else:
                     payload = bytes(packet[Raw].load).hex()
-            except AttributeError:
+            except Exception:
                 payload = '0'
             return payload
 
