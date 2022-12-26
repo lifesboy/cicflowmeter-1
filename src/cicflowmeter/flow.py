@@ -202,8 +202,9 @@ class Flow:
         data["subflow_bwd_pkts"] = data["tot_bwd_pkts"]
         data["subflow_fwd_byts"] = data["totlen_fwd_pkts"]
         data["subflow_bwd_byts"] = data["totlen_bwd_pkts"]
-        data["tot_payloads"] = len(flow_bytes.get_payloads())
-        data["payloads"] = "|".join(flow_bytes.get_payloads())
+        payloads = flow_bytes.get_payloads()
+        data["tot_payloads"] = len(payloads)
+        data["payloads"] = "|".join(payloads)
 
         return data
 
