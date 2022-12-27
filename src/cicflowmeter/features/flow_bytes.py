@@ -237,7 +237,7 @@ class FlowBytes:
         feat = self.feature
         return [packet["IP"].ttl for packet, _ in feat.packets][0]
 
-    def get_payloads(self) -> [bytearray]:
+    def get_payloads(self) -> bytearray:
         """Obtains the payload value.
 
         Returns:
@@ -254,7 +254,7 @@ class FlowBytes:
                     payload = bytearray(packet[Raw].load)
             except Exception:
                 payload = bytearray(0)
-            return payload
+            return payload if type(payload) == bytearray else bytearray(0)
 
         feat = self.feature
         payloads = bytearray(0)
