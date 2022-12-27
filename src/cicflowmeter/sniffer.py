@@ -14,6 +14,7 @@ from scapy.sendrecv import AsyncSniffer
 
 from .flow_session import generate_session_class
 
+from .share import FOURIER
 
 def create_sniffer(
         input_file, input_interface, output_mode, output_file, url_model=None
@@ -115,6 +116,17 @@ def main():
         help="number of cpus to sniff (default=1)",
     )
 
+    sample_num_group = parser.add_mutually_exclusive_group(required=False)
+    sample_num_group.add_argument(
+        "-ps",
+        "--payload-sample",
+        type=int,
+        action="store",
+        dest="payload_sample",
+        default=FOURIER['num_sample'] // 2,
+        help="number of sample point in fourier transform (default=512)",
+    )
+
     output_group = parser.add_mutually_exclusive_group(required=False)
     output_group.add_argument(
         "-c",
@@ -143,6 +155,7 @@ def main():
     args = parser.parse_args()
     batch_size = args.batch
     cpu_num = args.cpu_num
+    FOURIER['num_sample'] = 2 * args.payload_sample
     input_interface = args.input_interface
     output_mode = args.output_mode
     output = args.output

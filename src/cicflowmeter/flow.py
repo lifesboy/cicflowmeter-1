@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Any
+import numpy as np
 from scipy.fft import fft
 
 from . import constants
@@ -11,6 +12,7 @@ from .features.packet_count import PacketCount
 from .features.packet_length import PacketLength
 from .features.packet_time import PacketTime
 from .utils import get_statistics
+from .share import FOURIER
 
 
 class Flow:
@@ -203,9 +205,15 @@ class Flow:
         data["subflow_bwd_pkts"] = data["tot_bwd_pkts"]
         data["subflow_fwd_byts"] = data["totlen_fwd_pkts"]
         data["subflow_bwd_byts"] = data["totlen_bwd_pkts"]
+
+        N = FOURIER['num_sample']
         payloads = flow_bytes.get_payloads()
+        fft_payloads = fft(payloads)
+        freq = 2.0 / N * np.abs(fft_payloads[0:N // 2])
+        freq_payloads = np.pad(freq, (0, N // 2 - len(freq)), 'constant')
         data["len_payloads"] = len(payloads)
-        data["payloads"] = fft(payloads)
+        for i, p in freq_payloads:
+            data[f"p{i}"] = p
 
         return data
 

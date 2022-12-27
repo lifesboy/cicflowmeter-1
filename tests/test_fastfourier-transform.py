@@ -6,7 +6,7 @@ arr = bytearray(0) + bytearray('12531526236236236', 'utf-8')
 
 N = 100
 y_arr = fft(arr)
-res = 2.0/N * np.abs(y_arr[0:N//2])
-
+freq = 2.0/N * np.abs(y_arr[0:N//2])
+res = np.pad(freq, (0, N//2 - len(freq)), 'constant')
 print('y_arr=', y_arr)
 print('res=', res)
