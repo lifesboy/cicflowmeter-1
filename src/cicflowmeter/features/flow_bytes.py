@@ -237,27 +237,31 @@ class FlowBytes:
         feat = self.feature
         return [packet["IP"].ttl for packet, _ in feat.packets][0]
 
-    def get_payloads(self) -> [str]:
+    def get_payloads(self) -> [bytearray]:
         """Obtains the payload value.
 
         Returns:
             string: The hex of payload data value
 
         """
-        def get_payload(packet) -> str:
+        def get_payload(packet) -> bytearray:
             payload_protocols = [UDP, TCP, ICMP]
             payload_protocol = next((element for element in payload_protocols if element in packet), None)
             try:
                 if payload_protocol:
-                    payload = bytes(packet[payload_protocol].payload).hex()
+                    payload = bytearray(packet[payload_protocol].payload)
                 else:
-                    payload = bytes(packet[Raw].load).hex()
+                    payload = bytearray(packet[Raw].load)
             except Exception:
-                payload = '0'
+                payload = bytearray(0)
             return payload
 
         feat = self.feature
-        return [get_payload(packet) for packet, _ in feat.packets]
+        payloads = []
+        for packet, _ in feat.packets:
+            payloads += get_payload(packet)
+
+        return payloads
 
     def get_bytes_per_bulk(self, packet_direction):
         if packet_direction == PacketDirection.FORWARD:

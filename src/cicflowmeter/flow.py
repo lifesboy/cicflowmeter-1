@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Any
+from scipy.fft import fft
 
 from . import constants
 from .features.context import packet_flow_key
@@ -203,8 +204,8 @@ class Flow:
         data["subflow_fwd_byts"] = data["totlen_fwd_pkts"]
         data["subflow_bwd_byts"] = data["totlen_bwd_pkts"]
         payloads = flow_bytes.get_payloads()
-        data["tot_payloads"] = len(payloads)
-        data["payloads"] = "|".join(payloads)
+        data["len_payloads"] = len(payloads)
+        data["payloads"] = fft(payloads)
 
         return data
 
