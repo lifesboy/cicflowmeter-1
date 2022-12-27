@@ -212,7 +212,7 @@ class Flow:
         freq = 2.0 / N * np.abs(fft_payloads[0:N // 2])
         freq_payloads = np.pad(freq, (0, N // 2 - len(freq)), 'constant')
         data["len_payloads"] = len(payloads)
-        for i, p in freq_payloads:
+        for i, p in enumerate(freq_payloads):
             data[f"p{i}"] = p
 
         return data
