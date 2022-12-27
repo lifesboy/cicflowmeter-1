@@ -1,1 +1,1 @@
-FOURIER = {'num_sample': 1024}
+FOURIER = {'num_sample': 256}
