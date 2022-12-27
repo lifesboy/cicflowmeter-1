@@ -208,7 +208,7 @@ class Flow:
 
         N = FOURIER['num_sample']
         payloads = flow_bytes.get_payloads()
-        fft_payloads = fft(payloads)
+        fft_payloads = fft(payloads if len(payloads) > 0 else bytearray(1))
         freq = 2.0 / N * np.abs(fft_payloads[0:N // 2])
         freq_payloads = np.pad(freq, (0, N // 2 - len(freq)), 'constant')
         data["len_payloads"] = len(payloads)
