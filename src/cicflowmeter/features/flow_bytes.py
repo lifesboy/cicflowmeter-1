@@ -257,7 +257,7 @@ class FlowBytes:
             return payload
 
         feat = self.feature
-        payloads = []
+        payloads = bytearray(0)
         for packet, _ in feat.packets:
             payloads += get_payload(packet)
 
