@@ -249,9 +249,9 @@ class FlowBytes:
             payload_protocol = next((element for element in payload_protocols if element in packet), None)
             try:
                 if payload_protocol:
-                    payload = bytearray(packet[payload_protocol].payload)
+                    payload = bytearray(bytes(packet[payload_protocol].payload))
                 else:
-                    payload = bytearray(packet[Raw].load)
+                    payload = bytearray(bytes(packet[Raw].load))
             except Exception:
                 payload = bytearray(0)
             return payload if type(payload) == bytearray else bytearray(0)
