@@ -215,7 +215,7 @@ class Flow:
         # for i, p in enumerate(freq_payloads):
         #     data[f"p{i}"] = p
 
-        payloads_sample = np.pad(payloads, (0, max(N - len(payloads), 0)), 'constant')
+        payloads_sample = np.pad(payloads, (0, N - len(payloads)), 'constant') if N > len(payloads) else payloads[:N]
         for i, p in enumerate(payloads_sample):
             data[f"p{i}"] = p
 
