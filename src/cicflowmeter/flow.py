@@ -208,16 +208,17 @@ class Flow:
 
         N = FOURIER['num_sample']
         payloads = flow_bytes.get_payloads()
-        # fft_payloads = fft(payloads if len(payloads) > 0 else bytearray(1))
-        # freq = 2.0 / N * np.abs(fft_payloads[0:N // 2])
-        # freq_payloads = np.pad(freq, (0, N // 2 - len(freq)), 'constant')
-        # data["len_payloads"] = len(payloads)
-        # for i, p in enumerate(freq_payloads):
-        #     data[f"p{i}"] = p
+        data["len_payloads"] = len(payloads)
 
-        payloads_sample = np.pad(payloads, (0, N - len(payloads)), 'constant') if N > len(payloads) else payloads[:N]
-        for i, p in enumerate(payloads_sample):
+        fft_payloads = fft(payloads if len(payloads) > 0 else bytearray(1))
+        freq = 2.0 / N * np.abs(fft_payloads[0:N // 2])
+        freq_payloads = np.pad(freq, (0, N // 2 - len(freq)), 'constant') if N//2 > len(freq) else freq[:N//2]
+        for i, p in enumerate(freq_payloads):
             data[f"p{i}"] = p
+
+        # payloads_sample = np.pad(payloads, (0, N - len(payloads)), 'constant') if N > len(payloads) else payloads[:N]
+        # for i, p in enumerate(payloads_sample):
+        #     data[f"p{i}"] = p
 
         return data
 
