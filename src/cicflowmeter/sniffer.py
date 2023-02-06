@@ -123,8 +123,8 @@ def main():
         type=int,
         action="store",
         dest="payload_sample",
-        default=FOURIER['num_sample'] // 2,
-        help="number of sample point in fourier transform (default=512)",
+        default=0,
+        help="number of sample point in fourier transform (default=0)",
     )
 
     output_group = parser.add_mutually_exclusive_group(required=False)
