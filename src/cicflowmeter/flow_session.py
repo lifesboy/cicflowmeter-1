@@ -93,13 +93,7 @@ class FlowSession(DefaultSession):
 
         flow.add_packet(packet, direction)
 
-        if not self.url_model:
-            GARBAGE_COLLECT_PACKETS = 10000
-
-        if self.packets_count % GARBAGE_COLLECT_PACKETS == 0 or (
-            flow.duration > 120 and self.output_mode == "flow"
-        ):
-            self.garbage_collect(packet.time)
+        self.garbage_collect(packet.time)
 
     def get_flows(self) -> list:
         return self.flows.values()
