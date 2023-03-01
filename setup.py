@@ -72,6 +72,7 @@ setup(
         "console_scripts": ["cicflowmeter=cicflowmeter.sniffer:main"],
     },
     install_requires=REQUIRED,
+    package_data={'cicflowmeter.bin': ['cicflowmeter/bin/*']},
     include_package_data=True,
     license="MIT",
     classifiers=[
