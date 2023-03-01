@@ -16,10 +16,7 @@ def marked_done(files: []) -> bool:
 
 
 def get_output_file_of_batch(names: []) -> str:
-    timestamps = list(filter(lambda x: x.isnumeric() and '0000000000' < x < '9999999999', names[:1].split('.')))
-    time = datetime.fromtimestamp(int(timestamps[0])) if len(timestamps) else datetime.now()
-    created = time.strftime("%Y%m%dT%H%M%S")
-    return '%s_%s.csv' % ('_'.join(names[:1]), created)
+    return '%s_%s.csv' % ('_'.join(names[:1]), datetime.now().strftime("%Y%m%dT%H%M%S"))
     # return '%s_%s.csv' % ('_'.join(names), datetime.now().strftime("%Y%m%dT%H%M%S"))
 
 
