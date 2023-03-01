@@ -5,6 +5,7 @@ import pandas as pd
 from pandas import DataFrame
 
 from cicflowmeter import utils
+from cicflowmeter.jnet_sniffer import JnetSniffer
 from cicflowmeter.util.logger import log
 
 from scapy.layers.inet import IP, TCP, UDP
@@ -31,12 +32,9 @@ def create_sniffer(
         #       session=NewFlowSession,
         #       store=False,
         #       )
-        return AsyncSniffer(
-            offline=input_file,
-            lfilter=lambda x: IP in x and (TCP in x or UDP in x),
-            prn=None,
-            session=NewFlowSession,
-            store=False,
+        return JnetSniffer(
+            input_file=input_file,
+            output_file=output_file,
         )
     else:
         return AsyncSniffer(
